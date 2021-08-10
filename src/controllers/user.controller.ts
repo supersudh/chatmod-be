@@ -157,4 +157,36 @@ export class UserController {
 
     return savedUser;
   }
+
+  @authenticate('jwt')
+  @get('/users', {
+    responses: {
+      '200': {
+        description: 'Returns a list of users except current user. Use this API to populate user tab in App',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+            },
+          },
+        },
+      },
+    },
+  })
+  async listUsers(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+  ): Promise<Array<User>> {
+    const currentUserId = currentUserProfile[securityId];
+    const userList = await this.userRepository.find({
+      where: {
+        id: {
+          neq: Number(currentUserId)
+        }
+      }
+    });
+
+    return userList;
+
+  }
 }

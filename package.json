@@ -29,6 +29,7 @@
     "start": "node -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
     "dev": "npm run build:watch & nodemon -r source-map-support/register .",
+    "dev:debugdb": "npm run build:watch & DEBUG=loopback:datasource nodemon -r source-map-support/register . ",
     "restart:server": "pm2 delete chatmod-be && pm2 start npm --name chatmod-be -- run start"
   },
   "repository": {
