@@ -97,7 +97,7 @@ export class UserController {
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
-    return {token};
+    return {token, ...user};
   }
 
   @authenticate('jwt')
@@ -108,7 +108,7 @@ export class UserController {
         content: {
           'application/json': {
             schema: {
-              type: 'string',
+              type: 'object',
             },
           },
         },
@@ -118,8 +118,9 @@ export class UserController {
   async whoAmI(
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
-  ): Promise<string> {
-    return currentUserProfile[securityId];
+  ): Promise<object> {
+    const currentUser = this.userRepository.findById(currentUserProfile[securityId]);
+    return currentUser;
   }
 
   @post('/signup', {
