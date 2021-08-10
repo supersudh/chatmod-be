@@ -28,7 +28,8 @@
     "prestart": "yarn run rebuild",
     "start": "node -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
-    "dev": "npm run build:watch & nodemon -r source-map-support/register ."
+    "dev": "npm run build:watch & nodemon -r source-map-support/register .",
+    "restart:server": "pm2 delete chatmod-be && pm2 start npm --name chatmod-be -- run start"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,7 @@
     "@loopback/rest": "^9.1.2",
     "@loopback/rest-explorer": "^3.0.6",
     "@loopback/service-proxy": "^3.0.6",
+    "dotenv": "^10.0.0",
     "loopback-connector-mysql": "^5.3.0",
     "tslib": "^2.0.0"
   },

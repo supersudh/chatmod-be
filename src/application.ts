@@ -11,10 +11,12 @@ import {
   RestExplorerComponent
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
+import * as dotenv from 'dotenv';
 import path from 'path';
 import {ChatDbDataSource} from './datasources';
 import {MySequence} from './sequence';
 
+dotenv.config();
 export {ApplicationConfig};
 
 export class ChatAppBeApplication extends BootMixin(
@@ -54,6 +56,5 @@ export class ChatAppBeApplication extends BootMixin(
     // Bind datasource
     this.dataSource(ChatDbDataSource, UserServiceBindings.DATASOURCE_NAME);
     // End snippets related to authentication
-
   }
 }
