@@ -1,5 +1,8 @@
+import * as dotenv from 'dotenv';
 import {ApplicationConfig, ChatAppBeApplication} from './application';
 
+
+dotenv.config();
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
