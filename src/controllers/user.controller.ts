@@ -89,7 +89,7 @@ export class UserController {
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{token: string}> {
+  ): Promise<{data: {token: string}}> {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
@@ -97,7 +97,9 @@ export class UserController {
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
-    return {token, ...user};
+    return {
+      data: {token, ...user}
+    };
   }
 
   @authenticate('jwt')
@@ -120,7 +122,9 @@ export class UserController {
     currentUserProfile: UserProfile,
   ): Promise<object> {
     const currentUser = this.userRepository.findById(currentUserProfile[securityId]);
-    return currentUser;
+    return {
+      data: {currentUser}
+    };
   }
 
   @post('/signup', {
@@ -143,12 +147,13 @@ export class UserController {
         'application/json': {
           schema: getModelSchemaRef(NewUserRequest, {
             title: 'NewUser',
+            exclude: ['id', 'realm', 'emailVerified', 'verificationToken', 'additionalProp1']
           }),
         },
       },
     })
     newUserRequest: NewUserRequest,
-  ): Promise<User> {
+  ): Promise<{data: User}> {
     const password = await hash(newUserRequest.password, await genSalt());
     const savedUser = await this.userRepository.create(
       _.omit(newUserRequest, 'password'),
@@ -156,7 +161,7 @@ export class UserController {
 
     await this.userRepository.userCredentials(savedUser.id).create({password});
 
-    return savedUser;
+    return {data: savedUser};
   }
 
   @authenticate('jwt')
@@ -177,7 +182,7 @@ export class UserController {
   async listUsers(
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
-  ): Promise<Array<User>> {
+  ): Promise<{data: Array<User>}> {
     const currentUserId = currentUserProfile[securityId];
     const userList = await this.userRepository.find({
       where: {
@@ -187,7 +192,9 @@ export class UserController {
       }
     });
 
-    return userList;
+    return {
+      data: userList
+    };
 
   }
 }

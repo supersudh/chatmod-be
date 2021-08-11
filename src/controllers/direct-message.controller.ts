@@ -39,7 +39,7 @@ export class DirectMessageController {
       },
     })
     directMessage: Omit<DirectMessage, 'id'>,
-  ): Promise<DirectMessage> {
+  ): Promise<{data: DirectMessage}> {
     try {
       // 1. validation -> Compute sender from currentUser
       const sender = Number(currentUserProfile[securityId]);
@@ -53,10 +53,12 @@ export class DirectMessageController {
         throw new HttpErrors.UnprocessableEntity('receiver does not exist');
       }
       // 3. dbOp -> Create user in db and return created message object
-      return this.directMessageRepository.create({
-        ...directMessage,
-        sender
-      });
+      return {
+        data: await this.directMessageRepository.create({
+          ...directMessage,
+          sender
+        })
+      };
     } catch (error) {
       throw error;
     }
@@ -80,7 +82,7 @@ export class DirectMessageController {
     @param.query.string('userId', {
       description: 'Pass the id of the user to retrieve direct messages'
     }) userId: string,
-  ): Promise<DirectMessage[]> {
+  ): Promise<{data: DirectMessage[]}> {
     const currentUserId = Number(currentUserProfile[securityId]);
     if (Number(userId) === currentUserId) {
       throw new HttpErrors.UnprocessableEntity('userId is same as currentUserId');
@@ -91,7 +93,9 @@ export class DirectMessageController {
         {or: [{receiver: currentUserId}, {receiver: Number(userId)}]}
       ]
     };
-    return this.directMessageRepository.find({where});
+    return {
+      data: await this.directMessageRepository.find({where})
+    };
   }
 
   // @get('/direct-messages/count')

@@ -37,9 +37,10 @@ export class GroupGroupMessageController {
   async find(
     @param.path.number('id') id: number,
     @param.query.object('filter') filter?: Filter<GroupMessage>,
-  ): Promise<GroupMessage[]> {
-    console.log({filter});
-    return this.groupRepository.groupMessages(id).find(filter);
+  ): Promise<{data: GroupMessage[]}> {
+    return {
+      data: await this.groupRepository.groupMessages(id).find(filter)
+    };
   }
 
   @post('/groups/{id}/group-messages', {
@@ -65,13 +66,15 @@ export class GroupGroupMessageController {
     }) groupMessage: Omit<GroupMessage, 'id'>,
     @inject(SecurityBindings.USER)
     currentUserProfile: UserProfile,
-  ): Promise<GroupMessage> {
+  ): Promise<{data: GroupMessage}> {
     const sender = Number(currentUserProfile[securityId]);
 
-    return this.groupRepository.groupMessages(id).create({
-      ...groupMessage,
-      senderId: sender
-    });
+    return {
+      data: await this.groupRepository.groupMessages(id).create({
+        ...groupMessage,
+        senderId: sender
+      })
+    };
   }
 
   // @patch('/groups/{id}/group-messages', {
