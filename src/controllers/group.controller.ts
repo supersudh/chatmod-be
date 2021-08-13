@@ -63,8 +63,8 @@ export class GroupController {
   })
   async find(
     @param.filter(Group) filter?: Filter<Group>,
-  ): Promise<Group[]> {
-    return this.groupRepository.find(filter);
+  ): Promise<{data: Group[]}> {
+    return {data: await this.groupRepository.find(filter)};
   }
 
   // @patch('/groups')
