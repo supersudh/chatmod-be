@@ -29,6 +29,7 @@ export class DirectMessage extends Entity {
 
   @property({
     type: 'date',
+    default: () => new Date(),
     mysql: {
       type: 'datetime',
       default: 'CURRENT_TIMESTAMP'
